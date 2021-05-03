@@ -12,6 +12,46 @@
     return '"' + input_text + '"';
   };
   
+  converters['shorttrace'] = (input_text) => {
+    const input_lines = input_text.split('\n');
+    let output_lines = [];
+    let prev_j_package = '';
+    
+    //	at org.apache.jackrabbit.oak.core.SecureNodeBuilder.getChildNode(SecureNodeBuilder.java:328)
+    for(const line of input_lines) {
+      const stack_regex = /\s+at ([\w.$<>]+)\(([\w.]+)\:(\d+)\)/;
+      const matches = stack_regex.exec(line) || [];
+      console.log(matches);
+      
+      if(matches.length == 4) {
+        const modules = matches[1].split('.');
+        const j_method = modules.pop();
+        const j_class = modules.pop();
+        const j_package = modules.join('.');
+        const j_source = matches[2];
+        const j_line = matches[3];
+        console.log("package=" + j_package);
+        console.log("class=" + j_class);
+        console.log("method=" + j_method);
+        console.log("source=" + j_source);
+        console.log("source=" + j_line);
+        
+        if(prev_j_package === j_package) {
+          if(output_lines.slice(-1)[0] !== '...') {
+            output_lines.push('...');
+          }
+        } else {
+          output_lines.push(line);
+          prev_j_package = j_package;
+        }
+      } else {
+        output_lines.push(line);
+        prev_j_package = '';
+      }
+    }
+    
+    return output_lines.join('\n');
+  };
   
   const selected_converter = (configuration_selector) => {
     const converter_name = document.querySelector(configuration_selector).value;
@@ -31,7 +71,7 @@
     document.querySelector(swap_selector).addEventListener('click', () => {
       const input_text = document.querySelector(input_selector).value;
       document.querySelector(input_selector).value = document.querySelector(output_selector).value;
-      document.querySelector(output_selector).value = input_text;
+      document.querySelector(output_selector).value = '' + input_text;
     });
   };
   
