@@ -12,41 +12,59 @@
     return '"' + input_text + '"';
   };
   
+  converters['encode_utf8'] = (input_text) => {
+    const encoder = new TextEncoder();
+    const codes = encoder.encode(input_text);
+    return codes;
+  };
+  
+  const is_skippable = (line) => {
+    if(line.match(/org\.apache\.felix\.http\.base\.internal\./)
+      || line.match(/\.doFilter\(/)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
   converters['shorttrace'] = (input_text) => {
+  
     const input_lines = input_text.split('\n');
     let output_lines = [];
     let prev_j_package = '';
+    let prev_j_package_parent = '';
     
-    //	at org.apache.jackrabbit.oak.core.SecureNodeBuilder.getChildNode(SecureNodeBuilder.java:328)
     for(const line of input_lines) {
-      const stack_regex = /\s+at ([\w.$<>]+)\(([\w.]+)\:(\d+)\)/;
+      const stack_regex = /\s+at ([\w.$<>]+)\(([^)]+)\)/;
       const matches = stack_regex.exec(line) || [];
       console.log(matches);
       
-      if(matches.length == 4) {
+      if(matches.length == 3) {
         const modules = matches[1].split('.');
         const j_method = modules.pop();
         const j_class = modules.pop();
         const j_package = modules.join('.');
+        modules.pop();
+        const j_package_parent = modules.join('.');
         const j_source = matches[2];
-        const j_line = matches[3];
         console.log("package=" + j_package);
         console.log("class=" + j_class);
         console.log("method=" + j_method);
         console.log("source=" + j_source);
-        console.log("source=" + j_line);
         
-        if(prev_j_package === j_package) {
+        if(prev_j_package === j_package || is_skippable(line)) {
           if(output_lines.slice(-1)[0] !== '...') {
             output_lines.push('...');
           }
         } else {
           output_lines.push(line);
           prev_j_package = j_package;
+          prev_j_package_parent = j_package_parent;
         }
       } else {
         output_lines.push(line);
         prev_j_package = '';
+        prev_j_package_parent = '';
       }
     }
     
