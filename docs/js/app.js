@@ -40,7 +40,7 @@
       
       const stack_regex = /\s+at ([\w.$<>]+)\(([^)]+)\)/;
       const matches = stack_regex.exec(line) || [];
-      console.log(matches);
+      console.log({matches});
       
       if(matches.length == 3) {
         const modules = matches[1].split('.');
@@ -50,11 +50,7 @@
         packages.push(j_package);
         packages.shift();
         const j_source = matches[2];
-        console.log("package=" + j_package);
-        console.log("class=" + j_class);
-        console.log("method=" + j_method);
-        console.log("source=" + j_source);
-        console.log({packages});
+        console.log([{j_class}, {j_method}, {j_source}, {packages}]);
         
         if(packages[0] === j_package && packages[1] === j_package) {
           if(output_lines.slice(-1)[0] !== '...') {
