@@ -33,12 +33,14 @@
   }
   
   converters['shorttrace'] = (input_text) => {
-  
     const input_lines = input_text.split('\n');
     let output_lines = [];
     let packages = ['', '', ''];
     
-    for(const line of input_lines) {
+    const line_count = input_lines.length;
+    for(let i = 0; i < line_count; i++) {
+      const line = input_lines[i];
+      
       if(!is_skippable(line)) {
         output_lines.push(line);
       }
@@ -58,12 +60,14 @@
         console.log([{j_class}, {j_method}, {j_source}, {packages}]);
         
         if(packages[0] === j_package && packages[1] === j_package) {
-          if(output_lines.slice(-1)[0] !== '...') {
+          if(!(/\s- \w/.exec(input_lines[i + 1])) && output_lines.slice(-1)[0] !== '...') {
             output_lines.pop();
             output_lines.pop();
             output_lines.push('...');
           }
         }
+      } else {
+        packages = ['', '', ''];
       }
     }
     
