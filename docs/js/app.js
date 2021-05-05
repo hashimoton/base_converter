@@ -31,10 +31,15 @@
   
     const input_lines = input_text.split('\n');
     let output_lines = [];
+    let j_package = '';
     let prev_j_package = '';
-    let prev_j_package_parent = '';
+    let prev_prev_j_package = '';
     
     for(const line of input_lines) {
+      if(!is_skippable(line)) {
+        output_lines.push(line);
+      }
+      
       const stack_regex = /\s+at ([\w.$<>]+)\(([^)]+)\)/;
       const matches = stack_regex.exec(line) || [];
       console.log(matches);
@@ -43,28 +48,22 @@
         const modules = matches[1].split('.');
         const j_method = modules.pop();
         const j_class = modules.pop();
-        const j_package = modules.join('.');
-        modules.pop();
-        const j_package_parent = modules.join('.');
+        prev_prev_j_package = prev_j_package;
+        prev_j_package = j_package;
+        j_package = modules.join('.');
         const j_source = matches[2];
         console.log("package=" + j_package);
         console.log("class=" + j_class);
         console.log("method=" + j_method);
         console.log("source=" + j_source);
         
-        if(prev_j_package === j_package || is_skippable(line)) {
+        if(prev_j_package === j_package && prev_prev_j_package == j_package) {
           if(output_lines.slice(-1)[0] !== '...') {
+            output_lines.pop();
+            output_lines.pop();
             output_lines.push('...');
           }
-        } else {
-          output_lines.push(line);
-          prev_j_package = j_package;
-          prev_j_package_parent = j_package_parent;
         }
-      } else {
-        output_lines.push(line);
-        prev_j_package = '';
-        prev_j_package_parent = '';
       }
     }
     
