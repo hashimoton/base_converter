@@ -12,6 +12,11 @@
     return '"' + input_text + '"';
   };
   
+  converters['line_count'] = (input_text) => {
+    const input_lines = input_text.split('\n');
+    return input_lines.length;
+  };
+  
   converters['encode_utf8'] = (input_text) => {
     const encoder = new TextEncoder();
     const codes = encoder.encode(input_text);
