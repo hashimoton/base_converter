@@ -31,9 +31,7 @@
   
     const input_lines = input_text.split('\n');
     let output_lines = [];
-    let j_package = '';
-    let prev_j_package = '';
-    let prev_prev_j_package = '';
+    let packages = ['', '', ''];
     
     for(const line of input_lines) {
       if(!is_skippable(line)) {
@@ -48,16 +46,17 @@
         const modules = matches[1].split('.');
         const j_method = modules.pop();
         const j_class = modules.pop();
-        prev_prev_j_package = prev_j_package;
-        prev_j_package = j_package;
-        j_package = modules.join('.');
+        const j_package = modules.join('.');
+        packages.push(j_package);
+        packages.shift();
         const j_source = matches[2];
         console.log("package=" + j_package);
         console.log("class=" + j_class);
         console.log("method=" + j_method);
         console.log("source=" + j_source);
+        console.log({packages});
         
-        if(prev_j_package === j_package && prev_prev_j_package == j_package) {
+        if(packages[0] === j_package && packages[1] === j_package) {
           if(output_lines.slice(-1)[0] !== '...') {
             output_lines.pop();
             output_lines.pop();
