@@ -17,8 +17,6 @@ class Converter {
     convlib[EncodeUTF8.name] = EncodeUTF8.func;
     convlib[ShortTrace.name] = ShortTrace.func;
     
-    console.log(EncodeUTF8.constructor.name);
-    
     this.convlib = convlib;
     
   }
