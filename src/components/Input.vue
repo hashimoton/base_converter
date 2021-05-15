@@ -19,7 +19,7 @@
           Warning!
           <i class="closeModalBtn fas fa-times" @click="showModal = false"></i>
         </h3>
-        <h5 slot="body">Please Input Data!</h5>
+        <h5 slot="body">Please Select a Converter!</h5>
       </Modal>
     </div>
     <p class="inputTitle">Output Result</p>
@@ -29,6 +29,9 @@
 
 <script>
 import Modal from "./common/Modal";
+import { Converter } from './../../docs/js/converter.js';
+
+const converter = new Converter();
 
 export default {
   data() {
@@ -41,79 +44,11 @@ export default {
   },
   methods: {
     clickConvert() {
-      if (this.inputData !== "") {
-        if (this.selected === "copy") {
-          this.outputResult = this.inputData;
-        } else if (this.selected === "quote") {
-          this.outputResult = '"' + this.inputData + '"';
-        } else if (this.selected === "line_count") {
-          this.outputResult = this.inputData.split("\n").length;
-        } else if (this.selected === "encode_utf8") {
-          const encoder = new TextEncoder();
-          const codes = encoder.encode(this.inputData);
-          this.outputResult = codes;
-        } else if (this.selected === "shorttrace") {
-          const is_skippable = (line) => {
-            if (
-              line.match(/org\.apache\.felix\.http\.base\.internal\./) ||
-              line.match(/\.doFilter\(/)
-            ) {
-              return true;
-            } else {
-              return false;
-            }
-          };
-          const input_lines = this.inputData.split("\n");
-          let output_lines = [];
-          let packages = ["", "", ""];
-
-          const line_count = input_lines.length;
-          for (let i = 0; i < line_count; i++) {
-            const line = input_lines[i];
-
-            if (!is_skippable(line)) {
-              output_lines.push(line);
-            }
-
-            const stack_regex = /\s+at ([\w.$<>]+)\(([^)]+)\)/;
-            const matches = stack_regex.exec(line) || [];
-            console.log({ matches });
-
-            if (matches.length == 3) {
-              const modules = matches[1].split(".");
-              const j_method = modules.pop();
-              const j_class = modules.pop();
-              const j_package = modules.join(".");
-              packages.push(j_package);
-              packages.shift();
-              const j_source = matches[2];
-              console.log([
-                { j_class },
-                { j_method },
-                { j_source },
-                { packages },
-              ]);
-
-              if (packages[0] === j_package && packages[1] === j_package) {
-                if (
-                  !/\s- \w/.exec(input_lines[i + 1]) &&
-                  output_lines.slice(-1)[0] !== "..."
-                ) {
-                  output_lines.pop();
-                  output_lines.pop();
-                  output_lines.push("...");
-                }
-              }
-            } else {
-              packages = ["", "", ""];
-            }
-          }
-
-          this.outputResult = output_lines.join("\n");
-        }
-      } else {
-        // input text areaに何も入力されない状態でボタンをクリックするとアラートを出す
+      if (this.selected === "") {
+        // Alert wnen the converter is not specified
         this.showModal = !this.showModal;
+      } else {
+        this.outputResult = converter.convert(this.selected, "" + this.inputData);
       }
     },
   },
