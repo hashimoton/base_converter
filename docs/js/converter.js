@@ -4,6 +4,8 @@ import {LineCount} from './convlib/line_count.js';
 import {EncodeUTF8} from './convlib/encode_utf8.js';
 import {ShortTrace} from './convlib/shorttrace.js';
 
+const libs = [Copy, Quote, LineCount, EncodeUTF8, ShortTrace];
+
 class Converter {
 
   constructor() {
@@ -11,11 +13,9 @@ class Converter {
     console.log(Copy.name);
     
     const convlib = [];
-    convlib[Copy.name] = Copy.func;
-    convlib[Quote.name] = Quote.func;
-    convlib[LineCount.name] = LineCount.func;
-    convlib[EncodeUTF8.name] = EncodeUTF8.func;
-    convlib[ShortTrace.name] = ShortTrace.func;
+    for(const lib of libs) {
+      convlib[lib.name] = lib.func;
+    }
     
     this.convlib = convlib;
     
