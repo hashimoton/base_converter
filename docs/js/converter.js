@@ -2,9 +2,10 @@ import {Copy} from './convlib/copy.js';
 import {Quote} from './convlib/quote.js';
 import {LineCount} from './convlib/line_count.js';
 import {EncodeUTF8} from './convlib/encode_utf8.js';
+import {Code2HTML} from './convlib/code2html.js';
 import {ShortTrace} from './convlib/shorttrace.js';
 
-const libs = [Copy, Quote, LineCount, EncodeUTF8, ShortTrace];
+const libs = [Copy, Quote, LineCount, EncodeUTF8, Code2HTML, ShortTrace];
 
 class Converter {
 
