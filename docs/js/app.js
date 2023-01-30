@@ -1,4 +1,4 @@
-import {Converter} from './converter.js'
+import {Converter} from './converter.js';
 
 const selected_converter = (configuration_selector) => {
   return document.querySelector(configuration_selector).value;
@@ -6,6 +6,14 @@ const selected_converter = (configuration_selector) => {
 
 const enable_convert = (convert_selector, converters_selector, input_selector, output_selector) => {
   const converter = new Converter();
+  
+  let converters_holder = document.querySelector(converters_selector);
+  const converters = converter.list();
+  for(const converter in converters) {
+    let option = document.createElement('option');
+    option.innerText = converter;
+    converters_holder.appendChild(option);
+  }
   
   document.querySelector(convert_selector).addEventListener('click', () => {
     const input_text = document.querySelector(input_selector).value;
