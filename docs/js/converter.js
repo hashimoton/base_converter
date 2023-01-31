@@ -3,6 +3,7 @@ import {Quote} from './convlib/quote.js';
 import {LineCount} from './convlib/line_count.js';
 import {EncodeUTF8} from './convlib/encode_utf8.js';
 import {Code2HTML} from './convlib/code2html.js';
+import {RevealNonPrintable} from './convlib/reveal_nonprintable.js';
 import {ShortTrace} from './convlib/shorttrace.js';
 
 class Converter {
@@ -11,7 +12,7 @@ class Converter {
     console.log("Converter initiated");
     console.log(Copy.name);
     
-    const libs = [Copy, Quote, LineCount, EncodeUTF8, Code2HTML, ShortTrace];
+    const libs = [Copy, Quote, LineCount, EncodeUTF8, Code2HTML, RevealNonPrintable, ShortTrace];
     const convlib = [];
     for(const lib of libs) {
       convlib[lib.name] = lib.func;
