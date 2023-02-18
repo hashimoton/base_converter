@@ -10,7 +10,11 @@ export const RevealNonPrintable = {
   "func": (input) => {
     let revealed = input;
     if(input) {
-      revealed = input.replace(/(\u000B)/ug, reveal_char); // VT
+      // Invisible separators
+      // https://dic.nicovideo.jp/a/%E2%81%A3
+      revealed = input.replace(
+        /(\u000B|\u115F|\u1160|\u180E|\u200B|\u200C|\u200D|\u2060|\u2061|\u2062|\u2063|\u2064|\u3164|\uFFA0)/ug,
+        reveal_char);
     }
     return revealed;
   }
